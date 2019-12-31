@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.eslink.shardingjdbcdemo.dao.BizAddressDao">
+
+	<!--基础实体映射-->
+	<resultMap id="BaseResultMap" type="BizAddress">
+		<!--地址ID-->
+		<id property="addressId" column="address_id" />
+		<!--外部地址ID-->
+		<result property="outAddressId" column="out_address_id" />
+		<!--用户ID-->
+		<result property="userId" column="user_id" />
+		<!--次序号-->
+		<result property="sortNo" column="sort_no" />
+		<!--字符型排序-->
+		<result property="sortNoNotNumeric" column="sort_no_not_numeric" />
+		<!--省-->
+		<result property="province" column="province" />
+		<!--市-->
+		<result property="city" column="city" />
+		<!--区/县-->
+		<result property="county" column="county" />
+		<!--街道-->
+		<result property="street" column="street" />
+		<!--小区-->
+		<result property="housingEstateId" column="housing_estate_id" />
+		<!--楼栋号-->
+		<result property="buildingNo" column="building_no" />
+		<!--单元号-->
+		<result property="unitNo" column="unit_no" />
+		<!--楼层-->
+		<result property="floorNo" column="floor_no" />
+		<!--门牌号-->
+		<result property="houseNo" column="house_no" />
+		<!--地址描述-->
+		<result property="addressDesc" column="address_desc" />
+		<!--地址类型-->
+		<result property="addressType" column="address_type" />
+		<!--房屋面积-->
+		<result property="houseSpace" column="house_space" />
+		<!--房产证号-->
+		<result property="houseCertNo" column="house_cert_no" />
+		<!--建造年代-->
+		<result property="buildingAge" column="building_age" />
+		<!--用气类型-->
+		<result property="gasType" column="gas_type" />
+		<!--片区-->
+		<result property="areasId" column="areas_id" />
+		<!--状态-->
+		<result property="state" column="state" />
+		<!--是否隐藏 0-显示 1-隐藏-->
+		<result property="hideFlag" column="hide_flag" />
+		<!--编制标识-->
+		<result property="drawupFlag" column="drawup_flag" />
+		<!--批次号-->
+		<result property="batchNo" column="batch_no" />
+		<!--管理所-->
+		<result property="manageOrg" column="manage_org" />
+		<!--分配标识（0-未分配，1-已分配）-->
+		<result property="distributeFlag" column="distribute_flag" />
+		<!--开户时间-->
+		<result property="openDate" column="open_date" />
+		<!--是否采暖 0-否 1-是-->
+		<result property="cnFlag" column="cn_flag" />
+		<!--是否村村通 0-否 1-是-->
+		<result property="cctFlag" column="cct_flag" />
+		<!--上次安检年份-->
+		<result property="lastSafechcekYear" column="last_safechcek_year" />
+		<!--上次安检时间-->
+		<result property="lastSafecheckTime" column="last_safecheck_time" />
+		<!--重点用户-->
+		<result property="majorFlag" column="major_flag" />
+		<!--租户ID-->
+		<result property="tenantId" column="tenant_id" />
+		<!--来源 1：同步；2：新增-->
+		<result property="sourceType" column="source_type" />
+		<!--修改状态 0：未修改；1：已修改；-->
+		<result property="modifyState" column="modify_state" />
+		<!--审核标识 0：未审核；1：审核通过；2：审核驳回-->
+		<result property="auditState" column="audit_state" />
+		<!--确认标识 0：未确认；1：确认通过-->
+		<result property="confirmState" column="confirm_state" />
+		<!--0-etbc 数据录入，其余为对应的前置ID -->
+		<result property="originPreId" column="origin_pre_id" />
+		<!--修改备注-->
+		<result property="updateRemark" column="update_remark" />
+		<!--创建时间-->
+		<result property="createTime" column="create_time" />
+		<!--修改时间-->
+		<result property="modifyTime" column="modify_time" />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		address_id, out_address_id, user_id, sort_no, sort_no_not_numeric, province, city, county, street, housing_estate_id, building_no, unit_no, floor_no, house_no, address_desc, address_type, house_space, house_cert_no, building_age, gas_type, areas_id, state, hide_flag, drawup_flag, batch_no, manage_org, distribute_flag, open_date, cn_flag, cct_flag, last_safechcek_year, last_safecheck_time, major_flag, tenant_id, source_type, modify_state, audit_state, confirm_state, origin_pre_id, update_remark, create_time, modify_time
+	</sql>
+
+
+
+</mapper>

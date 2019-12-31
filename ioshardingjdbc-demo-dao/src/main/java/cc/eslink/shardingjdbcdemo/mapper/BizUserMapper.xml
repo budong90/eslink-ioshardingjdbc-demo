@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.eslink.shardingjdbcdemo.dao.BizUserDao">
+
+    <!--基础实体映射-->
+    <resultMap id="BaseResultMap" type="BizUser">
+        <!--用户ID-->
+        <id property="userId" column="user_id"/>
+        <!--外部用户ID-->
+        <result property="outUserId" column="out_user_id"/>
+        <!--用户号-->
+        <result property="userNo" column="user_no"/>
+        <!--用户类型 (1-居民用户，2-非居民用户)-->
+        <result property="userType" column="user_type"/>
+        <!--用户名称-->
+        <result property="userName" column="user_name"/>
+        <!--性别-->
+        <result property="gender" column="gender"/>
+        <!--出生日期-->
+        <result property="birthDate" column="birth_date"/>
+        <!--身份证号-->
+        <result property="certificateNo" column="certificate_no"/>
+        <!--证件类型-->
+        <result property="certificateType" column="certificate_type"/>
+        <!--联系地址-->
+        <result property="contactAddress" column="contact_address"/>
+        <!--手机-->
+        <result property="mobile" column="mobile"/>
+        <!--电话-->
+        <result property="telephone" column="telephone"/>
+        <!--单位名称-->
+        <result property="unitName" column="unit_name"/>
+        <!--单位性质 (1-市政，2-学校，3-工厂，4-酒店，5-医院，6-餐饮)-->
+        <result property="unitType" column="unit_type"/>
+        <!--单位描述-->
+        <result property="unitDesc" column="unit_desc"/>
+        <!--联系人-->
+        <result property="contactUser" column="contact_user"/>
+        <!--邮件-->
+        <result property="mailbox" column="mailbox"/>
+        <!--拉黑标识-1-黑名单，0-白名单-->
+        <result property="blackFlag" column="black_flag"/>
+        <!--其他信息-->
+        <result property="otherInfo" column="other_info"/>
+        <!--标签，多个 用逗号隔开-->
+        <result property="tagIds" column="tag_ids"/>
+        <!--是否是新用户 0-旧用户，1-新用户-->
+        <result property="newUserFlag" column="new_user_flag"/>
+        <!--状态 （1-正常，2-禁用，3-注销）-->
+        <result property="state" column="state"/>
+        <!--上次安检年份-->
+        <result property="lastSafechcekYear" column="last_safechcek_year"/>
+        <!--上次安检时间-->
+        <result property="lastSafecheckTime" column="last_safecheck_time"/>
+        <!--租户ID-->
+        <result property="tenantId" column="tenant_id"/>
+        <!--创建时间-->
+        <result property="createTime" column="create_time"/>
+        <!--修改时间-->
+        <result property="modifyTime" column="modify_time"/>
+    </resultMap>
+
+    <resultMap id="DetailResultMap" type="BizUser" extends="BaseResultMap">
+        <collection property="addressList" ofType="BizAddress" column="user_id">
+            <!--地址ID-->
+            <id property="addressId" column="address_id" />
+            <!--用户ID-->
+            <result property="userId" column="user_id2" />
+            <!--次序号-->
+            <result property="addressDesc" column="address_desc" />
+            <!--片区-->
+            <result property="areasId" column="areas_id" />
+            <!--小区-->
+            <result property="housingEstateId" column="housing_estate_id" />
+            <!--租户ID-->
+            <result property="tenantId" column="tenant_id2" />
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列-->
+    <sql id="Base_Column_List">
+        user_id, out_user_id, user_no, user_type, user_name, gender, birth_date, certificate_no, certificate_type, contact_address, mobile, telephone, unit_name, unit_type, unit_desc, contact_user, mailbox, black_flag, other_info, tag_ids, new_user_flag, state, last_safechcek_year, last_safecheck_time, tenant_id, create_time, modify_time
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select *
+        from biz_user
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectByTenantAndId" resultMap="BaseResultMap">
+        select *
+        from biz_user
+        where tenant_id = #{tenantId}
+          and user_id = #{userId}
+    </select>
+
+    <select id="selectDetailByTenantAndId" resultMap="DetailResultMap">
+        select a.*,b.address_id,b.user_id user_id2,b.address_desc,b.areas_id,b.housing_estate_id,b.tenant_id tenant_id2
+        from biz_user a left join biz_address b
+        on a.tenant_id=b.tenant_id and a.user_id=b.user_id
+        where a.tenant_id = #{tenantId} and a.user_id = #{userId}
+    </select>
+
+</mapper>

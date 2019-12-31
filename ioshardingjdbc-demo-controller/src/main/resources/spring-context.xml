@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:sharding="http://shardingsphere.io/schema/shardingsphere/sharding"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd 
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context.xsd  
+                        http://www.springframework.org/schema/tx  
+         				http://www.springframework.org/schema/tx/spring-tx.xsd  
+                        http://www.springframework.org/schema/aop 
+                        http://www.springframework.org/schema/aop/spring-aop.xsd
+						http://shardingsphere.io/schema/shardingsphere/sharding
+                        http://shardingsphere.io/schema/shardingsphere/sharding/sharding.xsd">
+
+    <!-- context扫描路径配置 （注：这里应该配置到cc.eslink，由于目前还有hibernate的基类，所以暂时配置到具体项目路径） -->
+    <context:annotation-config/>
+    <context:component-scan
+            base-package="cc.eslink.shardingjdbcdemo;cc.eslink.common.aspect;com.alibaba.fastjson.support.spring;">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- 注解式aop拦截配置 -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <context:property-placeholder ignore-unresolvable="true" location="classpath:conf/*.properties"/>
+
+    <!-- Druid数据源配置 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${shardingjdbc-demo.db.driver}"/>
+        <property name="url" value="${shardingjdbc-demo.db.url}"/>
+        <property name="username" value="${shardingjdbc-demo.db.username}"/>
+        <property name="password" value="${shardingjdbc-demo.db.password}"/>
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="${shardingjdbc-demo.db.initialSize}"></property>
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="${shardingjdbc-demo.db.maxActive}"></property>
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="${shardingjdbc-demo.db.minIdle}"></property>
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${shardingjdbc-demo.db.maxWait}"></property>
+        <!-- 定时对线程池链接进行检查 -->
+        <property name="testWhileIdle" value="${shardingjdbc-demo.db.whileIdle}"></property>
+        <!-- 检查时间 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${shardingjdbc-demo.db.evictTime}"></property>
+        <!-- 连接时间失效后重连机制 -->
+        <property name="validationQuery" value="${shardingjdbc-demo.db.testSql}"/>
+        <!-- 检查有效链接 -->
+        <property name="numTestsPerEvictionRun" value="${shardingjdbc-demo.db.evictNum}"></property>
+        <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="true"/>
+        <!-- 超时时间；单位为秒。180秒=3分钟 -->
+        <property name="removeAbandonedTimeout" value="180"/>
+        <!-- 关闭abanded连接时输出错误日志 -->
+        <property name="logAbandoned" value="true"/>
+        <!-- 启动是否初始化连接池 -->
+        <property name="asyncInit" value="true"/>
+        <!-- 是否保持连接 -->
+        <property name="keepAlive" value="true"/>
+        <!-- 连接池过滤 -->
+        <property name="proxyFilters">
+            <list>
+                <ref bean="stat-filter"/>
+                <ref bean="wall-filter"/>
+                <ref bean="log-filter"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter"/>
+    <bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
+        <property name="dbType" value="mysql"/>
+        <property name="logViolation" value="true"/>
+    </bean>
+    <bean id="log-filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+        <property name="statementExecutableSqlLogEnable" value="true"/>
+        <property name="dataSourceLogEnabled" value="false"/>
+        <property name="connectionLogEnabled" value="false"/>
+        <property name="statementLogEnabled" value="false"/>
+        <property name="resultSetLogEnabled" value="false"/>
+    </bean>
+
+    <!--<sharding:inline-strategy id="userTableStrategy" sharding-column="tenant_id"
+                              algorithm-expression="biz_user"/>-->
+
+    <bean id="MyComplexKeysShardingAlgorithm" class="cc.eslink.shardingjdbcdemo.strategy.MyComplexKeysShardingAlgorithm"/>
+    <sharding:complex-strategy id="tableStrategy" sharding-columns="tenant_id" algorithm-ref="MyComplexKeysShardingAlgorithm"/>
+
+    <sharding:data-source id="shardingDataSource">
+        <sharding:props>
+            <prop key="sql.show">true</prop>
+        </sharding:props>
+        <sharding:sharding-rule data-source-names="dataSource">
+            <sharding:table-rules>
+                <sharding:table-rule logic-table="biz_user" table-strategy-ref="tableStrategy"/>
+                <sharding:table-rule logic-table="biz_address" table-strategy-ref="tableStrategy"/>
+            </sharding:table-rules>
+            <sharding:binding-table-rules>
+                <sharding:binding-table-rule logic-tables="biz_user"/>
+                <sharding:binding-table-rule logic-tables="biz_address"/>
+            </sharding:binding-table-rules>
+        </sharding:sharding-rule>
+    </sharding:data-source>
+
+    <!-- MyBatis配置（通用mapper） -->
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cc.eslink.**.dao"/>
+        <property name="properties">
+            <value>
+                mappers=cc.eslink.common.base.BaseDao
+            </value>
+        </property>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="shardingDataSource"/>
+        <property name="mapperLocations" value="classpath*:cc/eslink/**/mapper/**/*Mapper.xml"/>
+        <!-- 注意，不支持通配符，多个用逗号分隔 -->
+        <property name="typeAliasesPackage" value="cc.eslink.shardingjdbcdemo.domain"/>
+        <!-- 分页插件配置（pagehelper） -->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <!--使用下面的方式配置参数，一行配置一个 -->
+                        <value>
+                            reasonable=true
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!-- 事务管理配置 -->
+    <bean id="commonTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="shardingDataSource"/>
+    </bean>
+    <!-- 开启声明式事务 -->
+    <tx:annotation-driven transaction-manager="commonTransactionManager"/>
+
+    <aop:config>
+        <aop:pointcut id="transactionPointcut"
+                      expression="execution(* cc.eslink.shardingjdbcdemo.service..*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="transactionPointcut"/>
+    </aop:config>
+
+    <tx:advice id="txAdvice" transaction-manager="commonTransactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="get*" read-only="true" propagation="NOT_SUPPORTED"/>
+            <tx:method name="find*" read-only="true" propagation="NOT_SUPPORTED"/>
+            <tx:method name="query*" read-only="true" propagation="NOT_SUPPORTED"/>
+        </tx:attributes>
+    </tx:advice>
+</beans>

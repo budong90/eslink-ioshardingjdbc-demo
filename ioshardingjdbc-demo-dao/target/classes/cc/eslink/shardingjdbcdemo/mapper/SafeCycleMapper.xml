@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.eslink.shardingjdbcdemo.dao.SafeCycleDao">
+
+	<!--基础实体映射-->
+	<resultMap id="BaseResultMap" type="SafeCycle">
+		<!--周期ID-->
+		<id property="cycleId" column="cycle_id" />
+		<!---->
+		<result property="newCycleId" column="new_cycle_id" />
+		<!--周期配置ID-->
+		<result property="cycleConfigId" column="cycle_config_id" />
+		<!--周期描述-->
+		<result property="cycleName" column="cycle_name" />
+		<!--0-全部，1-居民户，2-商业户-->
+		<result property="userType" column="user_type" />
+		<!--周期所在年份-->
+		<result property="safecheckYear" column="safecheck_year" />
+		<!--开始年-->
+		<result property="startYear" column="start_year" />
+		<!--开始月份-->
+		<result property="startMonth" column="start_month" />
+		<!--结束年-->
+		<result property="endYear" column="end_year" />
+		<!--开始时间-->
+		<result property="startTime" column="start_time" />
+		<!--结束月份-->
+		<result property="endMonth" column="end_month" />
+		<!--结束时间-->
+		<result property="endTime" column="end_time" />
+		<!--租户ID-->
+		<result property="tenantId" column="tenant_id" />
+		<!--创建时间-->
+		<result property="createTime" column="create_time" />
+		<!--修改时间-->
+		<result property="modifyTime" column="modify_time" />
+	</resultMap>
+
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		cycle_id, new_cycle_id, cycle_config_id, cycle_name, user_type, safecheck_year, start_year, start_month, end_year, start_time, end_month, end_time, tenant_id, create_time, modify_time
+	</sql>
+
+
+
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="WARN">
+	<Properties>
+		<!-- 发布时替换成 ${sys:catalina.home}/logs -->
+		<property name="LOG_HOME">/logs</property>
+		<!-- 日志格式： [日志级别][日志时间][日志名称][线程id_线程name][类]方法[代码行]（换行符）日志信息（换行符） -->
+		<property name="LOG_PATTERN">[%level][%date][%logger][%T_%t][%class][%method][%line]%n%msg%n
+		</property>
+	</Properties>
+
+	<appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+
+		<RollingRandomAccessFile name="appender_sys"
+			append="true" fileName="${LOG_HOME}/sys/sys.log" filePattern="${LOG_HOME}/sys/sys.%d{yyyy-MM-dd}.log">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+			</Policies>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile name="appender_biz"
+			append="true" fileName="${LOG_HOME}/biz/biz.log" filePattern="${LOG_HOME}/biz/biz.%d{yyyy-MM-dd}.log">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+			</Policies>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile name="appender_exp"
+			append="true" fileName="${LOG_HOME}/exp/exp.log" filePattern="${LOG_HOME}/exp/exp.%d{yyyy-MM-dd}.log">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+			</Policies>
+		</RollingRandomAccessFile>
+
+		<Async name="async" bufferSize="1" includeLocation="true">
+			<AppenderRef ref="appender_sys" />
+			<AppenderRef ref="appender_biz" />
+			<AppenderRef ref="appender_exp" />
+		</Async>
+	</appenders>
+
+	<Loggers>
+		<!-- 开发阶段控制台日志(上线请关闭，设为 OFF ) -->
+		<Root level="DEBUG">
+			<appender-ref ref="console" />
+		</Root>
+
+		<!-- 第三方日志 -->
+		<Logger name="RocketmqClient" level="ERROR" />
+		<Logger name="org.apache.zookeeper" level="ERROR" />
+		<Logger name="org.springframework.amqp.rabbit" level="ERROR" />
+		<Logger name="org.springframework.scheduling" level="ERROR" />
+		<Logger name="org.apache.ibatis" level="ERROR" />
+		<Logger name="org.I0Itec.zkclient" level="ERROR" />
+		<Logger name="org.mybatis.spring" level="ERROR" />
+		<Logger name="org.hibernate.validator" level="ERROR" />
+		<Logger name="com.alibaba.druid.pool.DruidDataSource" level="ERROR" />
+		<Logger name="com.alibaba.dubbo" level="ERROR" />
+		<Logger name="ma.glasnost.orika" level="ERROR" />
+
+		<!-- 随机包业务日志(上线设为 INFO ) -->
+		<Logger name="cc.eslink" level="DEBUG">
+			<appender-ref ref="appender_biz" />
+			<appender-ref ref="appender_exp" />
+		</Logger>
+		<!-- SQL日志(上线请关闭，设为 OFF ) -->
+		<Logger name="druid.sql.Statement" level="DEBUG">
+			<appender-ref ref="appender_sys" />
+		</Logger>
+		<!-- 系统日志(上线请关闭，设为 OFF ) -->
+		<Logger name="logger_sys" level="DEBUG">
+			<appender-ref ref="appender_sys" />
+		</Logger>
+		<!-- 业务日志 (上线设为 INFO ) -->
+		<Logger name="logger_biz" level="DEBUG">
+			<appender-ref ref="appender_biz" />
+		</Logger>
+		<!-- 异常日志 -->
+		<Logger name="logger_exp" level="ERROR">
+			<appender-ref ref="appender_biz" />
+			<appender-ref ref="appender_exp" />
+		</Logger>
+	</Loggers>
+</configuration>
