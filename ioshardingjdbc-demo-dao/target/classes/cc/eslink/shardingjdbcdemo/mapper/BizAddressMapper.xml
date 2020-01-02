@@ -97,6 +97,8 @@
 		address_id, out_address_id, user_id, sort_no, sort_no_not_numeric, province, city, county, street, housing_estate_id, building_no, unit_no, floor_no, house_no, address_desc, address_type, house_space, house_cert_no, building_age, gas_type, areas_id, state, hide_flag, drawup_flag, batch_no, manage_org, distribute_flag, open_date, cn_flag, cct_flag, last_safechcek_year, last_safecheck_time, major_flag, tenant_id, source_type, modify_state, audit_state, confirm_state, origin_pre_id, update_remark, create_time, modify_time
 	</sql>
 
-
+	<select id="getByTenantAndId" resultMap="BaseResultMap">
+		select * from biz_address where tenant_id = #{tenantId} and address_id = #{addressId}
+	</select>
 
 </mapper>

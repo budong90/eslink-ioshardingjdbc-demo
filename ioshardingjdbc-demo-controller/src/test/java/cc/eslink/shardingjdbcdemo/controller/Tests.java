@@ -179,4 +179,10 @@ public class Tests extends BaseTest {
         }
         bizUserService.insertBatch(list);
     }
+
+    @Test
+    public void test8() {
+        BizAddress bizAddress = bizAddressDao.getByTenantAndId("1P01", "2019123018011526695897849696");
+        System.out.println(bizAddress);
+    }
 }

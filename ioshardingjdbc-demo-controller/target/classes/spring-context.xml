@@ -92,12 +92,13 @@
         </sharding:props>
         <sharding:sharding-rule data-source-names="dataSource">
             <sharding:table-rules>
-                <sharding:table-rule logic-table="biz_user" table-strategy-ref="tableStrategy"/>
-                <sharding:table-rule logic-table="biz_address" table-strategy-ref="tableStrategy"/>
+                <sharding:table-rule logic-table="biz_user" table-strategy-ref="tableStrategy"
+                                     actual-data-nodes="dataSource.biz_user${['','_1p01']}"/>
+                <sharding:table-rule logic-table="biz_address" table-strategy-ref="tableStrategy"
+                                     actual-data-nodes="dataSource.biz_address${['','_1p01']}"/>
             </sharding:table-rules>
             <sharding:binding-table-rules>
-                <sharding:binding-table-rule logic-tables="biz_user"/>
-                <sharding:binding-table-rule logic-tables="biz_address"/>
+                <sharding:binding-table-rule logic-tables="biz_user,biz_address"/>
             </sharding:binding-table-rules>
         </sharding:sharding-rule>
     </sharding:data-source>
