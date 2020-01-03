@@ -108,10 +108,10 @@
         </sharding:props>
         <sharding:sharding-rule data-source-names="dataSource">
             <sharding:table-rules>
-                <sharding:table-rule logic-table="biz_user" table-strategy-ref="tableStrategy3" actual-data-nodes="dataSource.biz_user${['','_1p01']}" />
+                <sharding:table-rule logic-table="biz_user" table-strategy-ref="tableStrategy3" actual-data-nodes="${actual-data-nodes.biz_user}" />
                                      <!--actual-data-nodes="dataSource.biz_user${['','_1p01']}"-->
 
-                <sharding:table-rule logic-table="biz_address" table-strategy-ref="tableStrategy3" actual-data-nodes="dataSource.biz_address${['','_1p01']}" />
+                <sharding:table-rule logic-table="biz_address" table-strategy-ref="tableStrategy3" actual-data-nodes="${actual-data-nodes.biz_address}" />
                                      <!--actual-data-nodes="dataSource.biz_address${['','_1p01']}"-->
 
             </sharding:table-rules>
