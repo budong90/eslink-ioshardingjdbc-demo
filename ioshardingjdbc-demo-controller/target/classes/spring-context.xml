@@ -83,8 +83,24 @@
     <!--<sharding:inline-strategy id="userTableStrategy" sharding-column="tenant_id"
                               algorithm-expression="biz_user"/>-->
 
+    <!--复合分片-->
     <bean id="MyComplexKeysShardingAlgorithm" class="cc.eslink.shardingjdbcdemo.strategy.MyComplexKeysShardingAlgorithm"/>
     <sharding:complex-strategy id="tableStrategy" sharding-columns="tenant_id" algorithm-ref="MyComplexKeysShardingAlgorithm"/>
+
+    <!--标准分片-->
+    <bean id="MyRangeShardingAlgorithm" class="cc.eslink.shardingjdbcdemo.strategy.MyRangeShardingAlgorithm"/>
+    <bean id="MyPreciseShardingAlgorithm" class="cc.eslink.shardingjdbcdemo.strategy.MyPreciseShardingAlgorithm"/>
+    <sharding:standard-strategy id="tableStrategy2" sharding-column="tenant_id" precise-algorithm-ref="MyPreciseShardingAlgorithm" range-algorithm-ref="MyRangeShardingAlgorithm"/>
+
+    <!--hint分片-->
+    <bean id="MyHintShardingAlgorithm" class="cc.eslink.shardingjdbcdemo.strategy.MyHintShardingAlgorithm"/>
+    <sharding:hint-strategy id="tableStrategy3" algorithm-ref="MyHintShardingAlgorithm"/>
+
+    <!--行表达式分片-->
+    <!--<sharding:inline-strategy id="tableStrategy4" sharding-column="tenant_id" algorithm-expression=""/>-->
+
+    <!--不分片-->
+    <!--<sharding:none-strategy id="tableStrategy5"/>-->
 
     <sharding:data-source id="shardingDataSource">
         <sharding:props>
@@ -92,10 +108,12 @@
         </sharding:props>
         <sharding:sharding-rule data-source-names="dataSource">
             <sharding:table-rules>
-                <sharding:table-rule logic-table="biz_user" table-strategy-ref="tableStrategy"
-                                     actual-data-nodes="dataSource.biz_user${['','_1p01']}"/>
-                <sharding:table-rule logic-table="biz_address" table-strategy-ref="tableStrategy"
-                                     actual-data-nodes="dataSource.biz_address${['','_1p01']}"/>
+                <sharding:table-rule logic-table="biz_user" table-strategy-ref="tableStrategy3" actual-data-nodes="dataSource.biz_user${['','_1p01']}" />
+                                     <!--actual-data-nodes="dataSource.biz_user${['','_1p01']}"-->
+
+                <sharding:table-rule logic-table="biz_address" table-strategy-ref="tableStrategy3" actual-data-nodes="dataSource.biz_address${['','_1p01']}" />
+                                     <!--actual-data-nodes="dataSource.biz_address${['','_1p01']}"-->
+
             </sharding:table-rules>
             <sharding:binding-table-rules>
                 <sharding:binding-table-rule logic-tables="biz_user,biz_address"/>

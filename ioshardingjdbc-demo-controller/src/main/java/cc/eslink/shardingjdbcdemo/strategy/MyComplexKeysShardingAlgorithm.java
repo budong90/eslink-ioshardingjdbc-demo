@@ -19,6 +19,8 @@ public class MyComplexKeysShardingAlgorithm implements ComplexKeysShardingAlgori
 
     @Override
     public Collection<String> doSharding(Collection<String> availableTargetNames, Collection<ShardingValue> shardingValues) {
+        System.out.println("availableTargetNames=" + availableTargetNames);
+        System.out.println("shardingValues=" + shardingValues);
         List<String> shardingResults = new ArrayList<>();
         String tableName = availableTargetNames.iterator().next();
         for (ShardingValue shardingValue : shardingValues) {
@@ -32,8 +34,6 @@ public class MyComplexKeysShardingAlgorithm implements ComplexKeysShardingAlgori
                 }
             }
         }
-        System.out.println("availableTargetNames=" + availableTargetNames);
-        System.out.println("shardingValues=" + shardingValues);
         System.out.println(String.format("分片结果-----------------------------shardingResults=%s-----------------------------", shardingResults));
         return shardingResults;
     }

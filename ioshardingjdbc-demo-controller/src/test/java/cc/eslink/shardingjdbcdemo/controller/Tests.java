@@ -1,10 +1,13 @@
 package cc.eslink.shardingjdbcdemo.controller;
 
 import cc.eslink.shardingjdbcdemo.dao.BizAddressDao;
+import cc.eslink.shardingjdbcdemo.dao.SafeAreasDao;
 import cc.eslink.shardingjdbcdemo.domain.entity.BizAddress;
 import cc.eslink.shardingjdbcdemo.domain.entity.BizUser;
 import cc.eslink.shardingjdbcdemo.service.BizUserService;
 import cc.eslink.utilv1.IDUtil;
+import io.shardingsphere.api.HintManager;
+import io.shardingsphere.core.hint.HintManagerHolder;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 
@@ -128,6 +131,7 @@ public class Tests extends BaseTest {
      **/
     @org.junit.Test
     public void test5() {
+        HintManager.getInstance().addTableShardingValue("biz_user", "1P01");
         Map<String, String> map = new HashedMap();
         map.put("0302", "2019123018011526695897849696");
         map.put("0185", "2019123018011526939732111602");
@@ -180,9 +184,43 @@ public class Tests extends BaseTest {
         bizUserService.insertBatch(list);
     }
 
+    // 分片键like
     @Test
     public void test8() {
+        HintManager.getInstance().addTableShardingValue("biz_address", "1p01");
+        // 中间表like
         BizAddress bizAddress = bizAddressDao.getByTenantAndId("1P01", "2019123018011526695897849696");
+        // 直接like
+//        BizAddress bizAddress = bizAddressDao.getByTenantAndId2("1P01", "2019123018011526695897849696");
         System.out.println(bizAddress);
+    }
+
+    @Resource
+    private SafeAreasDao safeAreasDao;
+
+    // 非分片键like
+    @Test
+    public void test9() {
+//        List<BizAddress> list = bizAddressDao.queryByAreaId("1P01", "2019123018011526695897849696");
+//        System.out.println(list);
+        HintManager.getInstance().addTableShardingValue("biz_address", "1p01");
+        System.out.println(bizAddressDao.queryArea("1234567890"));
+    }
+
+    @Test
+    public void test10() {
+//        List<Map<String, Object>> list = bizAddressDao.queryList("0185");
+        HintManagerHolder.get().addTableShardingValue("biz_address", "1p01");
+        List<Map<String, Object>> list = bizAddressDao.queryList("1P01");
+        System.out.println(list);
+    }
+
+    @Test
+    public void test11() {
+        List<Map<String, Object>> list = bizAddressDao.queryList("0185");
+//        List<Map<String, Object>> list = bizAddressDao.queryList2(Arrays.asList("1P01", "0185"));
+//        List<Map<String, Object>> list = bizAddressDao.queryList3("0185");
+//        List<Map<String, Object>> list = bizAddressDao.queryList4("0185");
+        System.out.println(list);
     }
 }

@@ -98,7 +98,88 @@
 	</sql>
 
 	<select id="getByTenantAndId" resultMap="BaseResultMap">
-		select * from biz_address where tenant_id = #{tenantId} and address_id = #{addressId}
+		select * from (select * from biz_address where tenant_id like concat(#{tenantId},'%') and address_id = #{addressId}) t
 	</select>
 
+	<select id="getByTenantAndId2" resultMap="BaseResultMap">
+		select * from biz_address where tenant_id like concat(#{tenantId},'%') and address_id = #{addressId}
+	</select>
+
+	<select id="queryArea" resultType="java.util.HashMap">
+		select * from (select * from safe_areas where areas_id like concat(#{areasId},'%')) t limit 0,20
+	</select>
+
+	<select id="queryByAreaId" resultMap="BaseResultMap">
+		select b.* from safe_areas a,biz_address b where a.areas_id = b.areas_id
+		and a.tenant_id = b.tenant_id
+		and b.tenant_id = #{tenantId} and a.areas_id = #{areasId}
+	</select>
+
+	<select id="queryList2" resultType="java.util.HashMap">
+		select * from biz_address where tenant_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="queryList3" resultType="java.util.HashMap">
+		select * from biz_address where tenant_id like CONCAT(#{tenantId},'%')
+	</select>
+
+	<select id="queryList4" resultType="java.util.HashMap">
+		select a.* from biz_address a,biz_user b
+		where a.tenant_id=b.tenant_id and a.user_id=b.user_id
+		and a.tenant_id like CONCAT(#{tenantId},'%')
+	</select>
+
+	<select id="queryList" resultType="java.util.HashMap">
+		SELECT
+		*
+		FROM
+		(
+		SELECT
+		a.address_id AS addressId,
+		a.address_desc AS addressDesc,
+		a.state AS addressState,
+		a.areas_id AS areasId,
+		a.housing_estate_id AS housingEstateId,
+		a.tenant_id AS tenantId,
+		a.sort_no AS sortNo,
+		a.sort_no_not_numeric AS sortNoNotNumeric,
+		a.manage_org AS manageOrg,
+		a.batch_no AS batchNo,
+		a.gas_type AS gasType,
+		a.open_date AS openDate,
+		a.major_flag AS majorFlag,
+		b.user_id AS userId,
+		b.user_no AS userNo,
+		b.user_type AS userType,
+		b.user_name AS userName,
+		b.telephone AS telephone,
+		b.black_flag AS blackFlag,
+		b.mobile AS mobile,
+		b.tag_ids AS tagIds,
+		b.unit_name AS unitName,
+		b.unit_type AS unitType,
+		b.new_user_flag AS newUserFlag
+		FROM
+		biz_address a
+		INNER JOIN biz_user b USING (user_id, tenant_id)
+		WHERE
+ 		<!--a.tenant_id in ('1P01','0185')-->
+		a.tenant_id like CONCAT(#{tenantId},'%')
+		<!--a.tenant_id = #{tenantId}-->
+		AND (
+		a.`state` != 3
+		OR a.`state` IS NULL
+		)
+		AND a.hide_flag = 0
+		AND a.areas_id IS NOT NULL
+		AND a.housing_estate_id IS NOT NULL
+		) as t
+		<!--ORDER BY
+		sortNo,
+		addressDesc-->
+		LIMIT 0,20
+	</select>
 </mapper>
