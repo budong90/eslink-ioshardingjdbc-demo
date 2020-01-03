@@ -132,6 +132,7 @@ public class Tests extends BaseTest {
     @org.junit.Test
     public void test5() {
         HintManager.getInstance().addTableShardingValue("biz_user", "1P01");
+//        HintManager.getInstance().addTableShardingValue("biz_address", "1P01");
         Map<String, String> map = new HashedMap();
         map.put("0302", "2019123018011526695897849696");
         map.put("0185", "2019123018011526939732111602");
