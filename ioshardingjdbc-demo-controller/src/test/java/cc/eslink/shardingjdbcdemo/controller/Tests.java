@@ -196,6 +196,29 @@ public class Tests extends BaseTest {
         System.out.println(bizAddress);
     }
 
+    // 分片键in
+    @Test
+    public void test12() {
+//        HintManager.getInstance().addTableShardingValue("biz_address", "1p01");
+        // 中间表like
+        BizAddress bizAddress = bizAddressDao.getByTenantAndId3("1P01", "2019123018011526695897849696");
+        // 直接like
+//        BizAddress bizAddress = bizAddressDao.getByTenantAndId2("1P01", "2019123018011526695897849696");
+        System.out.println("result:" + bizAddress);
+    }
+
+    // 分片键in
+    @Test
+    public void test13() {
+//        HintManager.getInstance().addTableShardingValue("biz_address", "1p01");
+        // 中间表like
+        BizAddress bizAddress = bizAddressDao.getByTenantAndId4(Arrays.asList("1P01", "1P0101", "1P0102"), "2019123018011526695897849696");
+//        BizAddress bizAddress = bizAddressDao.getByTenantAndId5(Arrays.asList("1P01", "1P0101", "1P0102"), "2019123018011526695897849696");
+        // 直接like
+//        BizAddress bizAddress = bizAddressDao.getByTenantAndId2("1P01", "2019123018011526695897849696");
+        System.out.println("result:" + bizAddress);
+    }
+
     @Resource
     private SafeAreasDao safeAreasDao;
 

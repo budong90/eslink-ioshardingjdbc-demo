@@ -20,6 +20,12 @@ public interface BizAddressDao extends BaseDao<BizAddress> {
 
     BizAddress getByTenantAndId2(@Param("tenantId") String tenantId, @Param("addressId") String addressId);
 
+    BizAddress getByTenantAndId3(@Param("tenantId") String tenantId, @Param("addressId") String addressId);
+
+    BizAddress getByTenantAndId4(@Param("tenantIds") List<String> tenantIds, @Param("addressId") String addressId);
+
+    BizAddress getByTenantAndId5(@Param("tenantIds") List<String> tenantIds, @Param("addressId") String addressId);
+
     List<BizAddress> queryByAreaId(@Param("tenantId") String tenantId, @Param("areasId") String areasId);
 
     List<Map<String, Object>> queryList(String tenantId);

@@ -105,6 +105,26 @@
 		select * from biz_address where tenant_id like concat(#{tenantId},'%') and address_id = #{addressId}
 	</select>
 
+	<select id="getByTenantAndId3" resultMap="BaseResultMap">
+		select * from (select * from biz_address where tenant_id in (select tenant_id from safe_sys_basic where tenant_id like concat(#{tenantId},'%')) and address_id = #{addressId}) t
+	</select>
+
+	<select id="getByTenantAndId4" resultMap="BaseResultMap">
+		select * from (select * from biz_address where tenant_id in
+		<foreach collection="tenantIds" index="index" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		and address_id = #{addressId}) t
+	</select>
+
+	<select id="getByTenantAndId5" resultMap="BaseResultMap">
+		select * from biz_address where tenant_id in
+		<foreach collection="tenantIds" index="index" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+		and address_id = #{addressId}
+	</select>
+
 	<select id="queryArea" resultType="java.util.HashMap">
 		select * from (select * from safe_areas where areas_id like concat(#{areasId},'%')) t limit 0,20
 	</select>
